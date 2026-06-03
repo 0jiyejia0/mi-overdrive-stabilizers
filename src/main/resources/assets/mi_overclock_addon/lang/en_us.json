@@ -1,0 +1,7 @@
+{
+  "mod.mi_overclock_addon": "MI Overclock Addon",
+  "itemGroup.mi_overclock_addon": "MI Overclock Addon",
+  "item.mi_overclock_addon.overclock_memory_module": "Overclock Memory Module",
+  "item.mi_overclock_addon.persistent_overclock_module": "Persistent Overclock Module",
+  "item.mi_overclock_addon.quantum_overclock_controller": "Quantum Overclock Controller"
+}

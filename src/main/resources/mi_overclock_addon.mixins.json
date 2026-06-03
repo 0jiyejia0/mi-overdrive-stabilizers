@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.example.mi_overclock_addon.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "CrafterComponentMixin",
+    "OverdriveComponentAccessor",
+    "OverdriveComponentMixin",
+    "SlotPanelSlotTypeMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

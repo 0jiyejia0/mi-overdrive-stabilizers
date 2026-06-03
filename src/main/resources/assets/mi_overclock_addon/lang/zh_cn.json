@@ -1,0 +1,7 @@
+{
+  "mod.mi_overclock_addon": "MI 超频保持",
+  "itemGroup.mi_overclock_addon": "MI 超频保持",
+  "item.mi_overclock_addon.overclock_memory_module": "超频记忆模块",
+  "item.mi_overclock_addon.persistent_overclock_module": "稳定超频模块",
+  "item.mi_overclock_addon.quantum_overclock_controller": "量子超频控制器"
+}
