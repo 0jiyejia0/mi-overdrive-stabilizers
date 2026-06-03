@@ -29,6 +29,10 @@ repositories {
         name = 'Modrinth'
         url = 'https://api.modrinth.com/maven'
     }
+    maven {
+        name = 'BlameJared'
+        url = 'https://maven.blamejared.com/'
+    }
 }
 
 neoForge {
@@ -86,6 +90,7 @@ dependencies {
 
     localRuntime "maven.modrinth:modern-industrialization:${modern_industrialization_version}"
     localRuntime "maven.modrinth:guideme:${guideme_version}"
+    localRuntime "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
 }
 
 var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
