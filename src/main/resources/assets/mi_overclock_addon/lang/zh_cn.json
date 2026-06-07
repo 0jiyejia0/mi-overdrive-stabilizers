@@ -1,15 +1,18 @@
 {
-  "itemGroup.mi_overclock_addon": "MI 超频保持",
+  "itemGroup.mi_overclock_addon": "MI超频稳定器",
 
-  "item.mi_overclock_addon.overclock_memory_module": "超频记忆模块",
-  "item.mi_overclock_addon.overclock_memory_module.desc": "放入机器的超速槽。切换配方时保留约一半已积累的超频，空闲时也会稳住不掉。",
-  "item.mi_overclock_addon.overclock_memory_module.flavor": "它还记着机器全速运转时的轰鸣。",
+  "item.mi_overclock_addon.overclock_memory_module": "模拟超频稳定器",
+  "item.mi_overclock_addon.overclock_memory_module.line_0": "放入电动机器的超频模块槽中。",
+  "item.mi_overclock_addon.overclock_memory_module.line_1": "切换配方时保留一半效率，空闲时防止效率下降。",
+  "item.mi_overclock_addon.overclock_memory_module.flavor": "简单的反馈回路也能记住机器的节奏。",
 
-  "item.mi_overclock_addon.persistent_overclock_module": "稳定超频模块",
-  "item.mi_overclock_addon.persistent_overclock_module.desc": "放入机器的超速槽。切换配方时完整保留已积累的超频，空闲时也绝不衰减。",
-  "item.mi_overclock_addon.persistent_overclock_module.flavor": "节奏一旦建立，就再没有松懈过。",
+  "item.mi_overclock_addon.persistent_overclock_module": "电子超频稳定器",
+  "item.mi_overclock_addon.persistent_overclock_module.line_0": "放入电动机器的超频模块槽中。",
+  "item.mi_overclock_addon.persistent_overclock_module.line_1": "切换配方时保留全部效率，空闲时防止效率下降。",
+  "item.mi_overclock_addon.persistent_overclock_module.flavor": "让机器延续刚才的工作节奏。",
 
-  "item.mi_overclock_addon.quantum_overclock_controller": "量子超频控制器",
-  "item.mi_overclock_addon.quantum_overclock_controller.desc": "放入机器的超速槽。只要通电就始终维持满超频——停机、等待原料、切换配方都不掉速。",
-  "item.mi_overclock_addon.quantum_overclock_controller.flavor": "在量子层面冻结时间，让全速永不冷却。"
+  "item.mi_overclock_addon.quantum_overclock_controller": "数字超频稳定器",
+  "item.mi_overclock_addon.quantum_overclock_controller.line_0": "放入电动机器的超频模块槽中。",
+  "item.mi_overclock_addon.quantum_overclock_controller.line_1": "只要机器有电，就将效率维持在最大值。",
+  "item.mi_overclock_addon.quantum_overclock_controller.flavor": "精确的时序控制让机器始终保持满速。"
 }

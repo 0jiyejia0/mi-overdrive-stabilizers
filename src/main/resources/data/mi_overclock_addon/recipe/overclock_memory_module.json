@@ -9,7 +9,7 @@
   "key": {
     "P": { "item": "modern_industrialization:steel_plate" },
     "R": { "item": "minecraft:redstone" },
-    "C": { "item": "modern_industrialization:electronic_circuit" }
+    "C": { "item": "modern_industrialization:analog_circuit" }
   },
   "result": {
     "id": "mi_overclock_addon:overclock_memory_module",

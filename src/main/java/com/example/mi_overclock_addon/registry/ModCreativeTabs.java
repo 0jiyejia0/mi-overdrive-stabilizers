@@ -18,11 +18,11 @@ public final class ModCreativeTabs {
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> MAIN = CREATIVE_MODE_TABS.register("main",
             () -> CreativeModeTab.builder()
                     .title(Component.translatable("itemGroup.mi_overclock_addon"))
-                    .icon(() -> new ItemStack(ModItems.QUANTUM_OVERCLOCK_CONTROLLER.get()))
+                    .icon(() -> new ItemStack(ModItems.DIGITAL_OVERCLOCK_STABILIZER.get()))
                     .displayItems((parameters, output) -> {
                         output.accept(ModItems.OVERCLOCK_MEMORY_MODULE.get());
                         output.accept(ModItems.PERSISTENT_OVERCLOCK_MODULE.get());
-                        output.accept(ModItems.QUANTUM_OVERCLOCK_CONTROLLER.get());
+                        output.accept(ModItems.DIGITAL_OVERCLOCK_STABILIZER.get());
                     })
                     .build());
 

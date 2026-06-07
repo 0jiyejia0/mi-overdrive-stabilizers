@@ -1,15 +1,18 @@
 {
-  "itemGroup.mi_overclock_addon": "MI Overclock Keeper",
+  "itemGroup.mi_overclock_addon": "MI Overdrive Stabilizers",
 
-  "item.mi_overclock_addon.overclock_memory_module": "Overclock Memory Module",
-  "item.mi_overclock_addon.overclock_memory_module.desc": "Goes in a machine's overdrive slot. Keeps about half of the built-up overclock when the recipe changes, and holds it steady while idle.",
-  "item.mi_overclock_addon.overclock_memory_module.flavor": "It still remembers the hum of full throttle.",
+  "item.mi_overclock_addon.overclock_memory_module": "Analog Overdrive Stabilizer",
+  "item.mi_overclock_addon.overclock_memory_module.line_0": "Inserted in an electric machine's overdrive module slot.",
+  "item.mi_overclock_addon.overclock_memory_module.line_1": "Retains half of the efficiency when recipes change, and prevents idle efficiency loss.",
+  "item.mi_overclock_addon.overclock_memory_module.flavor": "Even a simple feedback loop can remember the machine's rhythm.",
 
-  "item.mi_overclock_addon.persistent_overclock_module": "Persistent Overclock Module",
-  "item.mi_overclock_addon.persistent_overclock_module.desc": "Goes in a machine's overdrive slot. Fully preserves the built-up overclock across recipe changes and never lets it decay while idle.",
-  "item.mi_overclock_addon.persistent_overclock_module.flavor": "Once the rhythm is set, it never skips a beat.",
+  "item.mi_overclock_addon.persistent_overclock_module": "Electronic Overdrive Stabilizer",
+  "item.mi_overclock_addon.persistent_overclock_module.line_0": "Inserted in an electric machine's overdrive module slot.",
+  "item.mi_overclock_addon.persistent_overclock_module.line_1": "Retains all efficiency when recipes change, and prevents idle efficiency loss.",
+  "item.mi_overclock_addon.persistent_overclock_module.flavor": "Keeps the machine's working rhythm intact.",
 
-  "item.mi_overclock_addon.quantum_overclock_controller": "Quantum Overclock Controller",
-  "item.mi_overclock_addon.quantum_overclock_controller.desc": "Goes in a machine's overdrive slot. Pins the machine to maximum overclock at all times while powered \u2014 even idling, waiting for inputs, or switching recipes.",
-  "item.mi_overclock_addon.quantum_overclock_controller.flavor": "It freezes time at the quantum scale, so full speed never cools down."
+  "item.mi_overclock_addon.quantum_overclock_controller": "Digital Overdrive Stabilizer",
+  "item.mi_overclock_addon.quantum_overclock_controller.line_0": "Inserted in an electric machine's overdrive module slot.",
+  "item.mi_overclock_addon.quantum_overclock_controller.line_1": "Maintains maximum efficiency as long as the machine has power.",
+  "item.mi_overclock_addon.quantum_overclock_controller.flavor": "Precise timing control keeps the machine at full speed."
 }

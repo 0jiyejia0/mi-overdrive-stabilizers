@@ -1,5 +1,6 @@
 package com.example.mi_overclock_addon.logic;
 
+import com.example.mi_overclock_addon.config.OverclockConfig;
 import com.example.mi_overclock_addon.mixin.OverdriveComponentAccessor;
 import com.example.mi_overclock_addon.registry.ModItems;
 
@@ -12,14 +13,14 @@ public enum OverclockModuleType {
     NONE,
     MEMORY,
     PERSISTENT,
-    QUANTUM;
+    DIGITAL;
 
     public boolean allowsRecipeSwitching() {
         return this != NONE;
     }
 
-    public boolean isQuantum() {
-        return this == QUANTUM;
+    public boolean isDigital() {
+        return this == DIGITAL;
     }
 
     /**
@@ -36,14 +37,29 @@ public enum OverclockModuleType {
      */
     public int switchEfficiency(int bankedEfficiency, int newMaxEfficiency) {
         return switch (this) {
-            // Restores half of the banked warm-up when changing recipes (round up so 1 tick is not lost).
-            case MEMORY -> Math.min(newMaxEfficiency, (bankedEfficiency + 1) / 2);
-            // Restores the full banked warm-up when changing recipes.
-            case PERSISTENT -> Math.min(newMaxEfficiency, bankedEfficiency);
+            case MEMORY -> applyRetentionPercent(bankedEfficiency, OverclockConfig.MEMORY_RETENTION_PERCENT.get(), newMaxEfficiency);
+            case PERSISTENT -> applyRetentionPercent(bankedEfficiency, OverclockConfig.PERSISTENT_RETENTION_PERCENT.get(), newMaxEfficiency);
             // Always pinned to the maximum overclock.
-            case QUANTUM -> newMaxEfficiency;
+            case DIGITAL -> newMaxEfficiency;
             case NONE -> 0;
         };
+    }
+
+    /**
+     * Restores {@code percent}% of the banked warm-up, rounding up so a non-zero bank never collapses
+     * to 0, and clamping to the new recipe's cap.
+     */
+    private static int applyRetentionPercent(int bankedEfficiency, int percent, int newMaxEfficiency) {
+        if (bankedEfficiency <= 0 || percent <= 0) {
+            return 0;
+        }
+        int retained = (int) ((bankedEfficiency * (long) percent + 99) / 100);
+        return Math.min(newMaxEfficiency, retained);
+    }
+
+    /** Whether this module keeps the machine pinned at max overclock while idle (drains EU to do so). */
+    public boolean holdsMaxWhenIdle() {
+        return this == DIGITAL && OverclockConfig.DIGITAL_HOLD_WHEN_IDLE.get();
     }
 
     public static boolean isOverclockModule(ItemStack stack) {
@@ -54,8 +70,8 @@ public enum OverclockModuleType {
         if (stack == null || stack.isEmpty()) {
             return NONE;
         }
-        if (stack.getItem() == ModItems.QUANTUM_OVERCLOCK_CONTROLLER.get()) {
-            return QUANTUM;
+        if (stack.getItem() == ModItems.DIGITAL_OVERCLOCK_STABILIZER.get()) {
+            return DIGITAL;
         }
         if (stack.getItem() == ModItems.PERSISTENT_OVERCLOCK_MODULE.get()) {
             return PERSISTENT;
@@ -67,6 +83,9 @@ public enum OverclockModuleType {
     }
 
     public static OverclockModuleType from(CrafterComponent.Behavior behavior) {
+        if (!OverclockConfig.ENABLED.get()) {
+            return NONE;
+        }
         if (!(behavior instanceof MachineBlockEntity machine)) {
             return NONE;
         }

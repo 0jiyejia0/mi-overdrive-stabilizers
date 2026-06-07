@@ -4,10 +4,21 @@ out/
 run/
 run-*/
 logs/
+crash-reports/
 
 *.class
 *.log
+*.hprof
+hs_err_pid*.log
+replay_pid*.log
 
 .idea/
 *.iml
 .vscode/
+
+# Local reference/source art, not part of the distributable mod.
+mi_reference_textures/
+
+# OS/editor noise
+.DS_Store
+Thumbs.db

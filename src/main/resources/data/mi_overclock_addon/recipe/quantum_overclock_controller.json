@@ -1,14 +1,14 @@
 {
   "type": "modern_industrialization:assembler",
   "eu": 8,
-  "duration": 600,
+  "duration": 400,
   "item_inputs": [
     {
       "item": "mi_overclock_addon:persistent_overclock_module",
       "amount": 1
     },
     {
-      "item": "modern_industrialization:quantum_circuit",
+      "item": "modern_industrialization:digital_circuit",
       "amount": 2
     },
     {

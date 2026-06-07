@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "modern_industrialization:item/turbo_upgrade"
+    "layer0": "mi_overclock_addon:item/persistent_overclock_module"
   }
 }

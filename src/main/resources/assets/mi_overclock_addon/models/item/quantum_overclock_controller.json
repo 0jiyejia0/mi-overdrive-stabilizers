@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "modern_industrialization:item/quantum_upgrade"
+    "layer0": "mi_overclock_addon:item/quantum_overclock_controller"
   }
 }
