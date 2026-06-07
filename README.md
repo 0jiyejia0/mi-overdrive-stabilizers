@@ -19,10 +19,12 @@ when they idle or switch recipes.
 ## Versions
 
 - Minecraft: 1.21.1
-- Loader: NeoForge 21.1.233
+- Loader: NeoForge 21.1.1 or newer
 - Java: 21
-- Modern Industrialization: 2.4.3
-- GuideME: 21.1.16
+- Modern Industrialization: 2.2.22 or newer
+
+GuideME is not declared directly by this addon; use the dependency set required by
+your installed Modern Industrialization version.
 
 ## Development
 

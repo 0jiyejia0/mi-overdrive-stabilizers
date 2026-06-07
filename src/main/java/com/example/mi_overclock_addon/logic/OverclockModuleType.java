@@ -1,5 +1,10 @@
 package com.example.mi_overclock_addon.logic;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.function.Function;
+
 import com.example.mi_overclock_addon.config.OverclockConfig;
 import com.example.mi_overclock_addon.mixin.OverdriveComponentAccessor;
 import com.example.mi_overclock_addon.registry.ModItems;
@@ -90,12 +95,52 @@ public enum OverclockModuleType {
             return NONE;
         }
 
-        OverdriveComponent overdrive = machine.components.getNullable(OverdriveComponent.class);
+        OverdriveComponent overdrive = getOverdriveComponent(machine);
         if (overdrive == null) {
             return NONE;
         }
 
         ItemStack stack = ((OverdriveComponentAccessor) overdrive).mi_overclock_addon$getOverdriveModule();
         return fromStack(stack);
+    }
+
+    private static OverdriveComponent getOverdriveComponent(MachineBlockEntity machine) {
+        OverdriveComponent modernComponent = getModernComponent(machine);
+        if (modernComponent != null) {
+            return modernComponent;
+        }
+        return getLegacyComponent(machine);
+    }
+
+    private static OverdriveComponent getModernComponent(MachineBlockEntity machine) {
+        try {
+            Field componentsField = MachineBlockEntity.class.getField("components");
+            Object components = componentsField.get(machine);
+            Method getNullable = components.getClass().getMethod("getNullable", Class.class);
+            return (OverdriveComponent) getNullable.invoke(components, OverdriveComponent.class);
+        } catch (NoSuchFieldException | NoSuchMethodException ignored) {
+            return null;
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            throw new IllegalStateException("Failed to read MI overdrive component.", e);
+        }
+    }
+
+    private static OverdriveComponent getLegacyComponent(MachineBlockEntity machine) {
+        try {
+            Method mapComponentOrDefault = MachineBlockEntity.class.getMethod(
+                    "mapComponentOrDefault",
+                    Class.class,
+                    Function.class,
+                    Object.class);
+            return (OverdriveComponent) mapComponentOrDefault.invoke(
+                    machine,
+                    OverdriveComponent.class,
+                    (Function<OverdriveComponent, OverdriveComponent>) component -> component,
+                    null);
+        } catch (NoSuchMethodException ignored) {
+            return null;
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            throw new IllegalStateException("Failed to read legacy MI overdrive component.", e);
+        }
     }
 }

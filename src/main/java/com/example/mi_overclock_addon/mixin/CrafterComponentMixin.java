@@ -1,12 +1,18 @@
 package com.example.mi_overclock_addon.mixin;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.example.mi_overclock_addon.logic.OverclockModuleType;
 
+import aztech.modern_industrialization.inventory.ConfigurableItemStack;
 import aztech.modern_industrialization.machines.components.CrafterComponent;
 import aztech.modern_industrialization.machines.recipe.MachineRecipe;
+import aztech.modern_industrialization.machines.recipe.MachineRecipeType;
 import aztech.modern_industrialization.util.Simulation;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -83,8 +89,21 @@ public abstract class CrafterComponentMixin {
         boolean moduleAllowsSwitching = OverclockModuleType.from(behavior).allowsRecipeSwitching();
 
         if (needsNullRecipeGuard || moduleAllowsSwitching) {
-            cir.setReturnValue(CrafterComponent.getRecipes(behavior.getCrafterWorld(), behavior.recipeType(), inventory.getItemInputs()));
+            cir.setReturnValue(mi_overclock_addon$getMatchingRecipes());
         }
+    }
+
+    @Unique
+    private Iterable<RecipeHolder<MachineRecipe>> mi_overclock_addon$getMatchingRecipes() {
+        ServerLevel serverWorld = (ServerLevel) behavior.getCrafterWorld();
+        MachineRecipeType recipeType = behavior.recipeType();
+        List<RecipeHolder<MachineRecipe>> recipes = new ArrayList<>(recipeType.getFluidOnlyRecipes(serverWorld));
+        for (ConfigurableItemStack stack : inventory.getItemInputs()) {
+            if (!stack.isEmpty()) {
+                recipes.addAll(recipeType.getMatchingRecipes(serverWorld, stack.getResource().getItem()));
+            }
+        }
+        return recipes;
     }
 
     /**
