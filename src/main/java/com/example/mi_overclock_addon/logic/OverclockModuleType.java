@@ -36,8 +36,8 @@ public enum OverclockModuleType {
      */
     public int switchEfficiency(int bankedEfficiency, int newMaxEfficiency) {
         return switch (this) {
-            // Restores half of the banked warm-up when changing recipes.
-            case MEMORY -> Math.min(newMaxEfficiency, bankedEfficiency / 2);
+            // Restores half of the banked warm-up when changing recipes (round up so 1 tick is not lost).
+            case MEMORY -> Math.min(newMaxEfficiency, (bankedEfficiency + 1) / 2);
             // Restores the full banked warm-up when changing recipes.
             case PERSISTENT -> Math.min(newMaxEfficiency, bankedEfficiency);
             // Always pinned to the maximum overclock.

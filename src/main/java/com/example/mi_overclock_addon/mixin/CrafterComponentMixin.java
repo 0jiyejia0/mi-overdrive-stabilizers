@@ -48,6 +48,10 @@ public abstract class CrafterComponentMixin {
     @Unique
     private boolean mi_overclock_addon$justSwitchedRecipe;
 
+    /** Efficiency at the start of {@code updateActiveRecipe}, before MI may change the active recipe. */
+    @Unique
+    private int mi_overclock_addon$efficiencyBeforeRecipeUpdate;
+
     /**
      * Peak warm-up (efficiency ticks) the machine has ever reached while a module was installed.
      * This single value is the "banked warm-up": it lets the machine restore its overclock after
@@ -65,22 +69,41 @@ public abstract class CrafterComponentMixin {
      */
     @Inject(method = "getRecipes()Ljava/lang/Iterable;", at = @At("HEAD"), cancellable = true)
     private void mi_overclock_addon$allowRecipeSwitching(CallbackInfoReturnable<Iterable<RecipeHolder<MachineRecipe>>> cir) {
-        if (efficiencyTicks > 0 && activeRecipe != null && OverclockModuleType.from(behavior).allowsRecipeSwitching()) {
+        if (efficiencyTicks <= 0) {
+            return;
+        }
+
+        // Holding warm-up without an active recipe (vanilla returns singletonList(null) and crashes).
+        boolean needsNullRecipeGuard = activeRecipe == null;
+        boolean moduleAllowsSwitching = OverclockModuleType.from(behavior).allowsRecipeSwitching();
+
+        if (needsNullRecipeGuard || moduleAllowsSwitching) {
             cir.setReturnValue(CrafterComponent.getRecipes(behavior.getCrafterWorld(), behavior.recipeType(), inventory.getItemInputs()));
+        }
+    }
+
+    /**
+     * While a module is holding warm-up, do not clear the active recipe when efficiency briefly hits 0
+     * before our end-of-tick freeze restores it.
+     */
+    @Inject(method = "clearActiveRecipeIfPossible", at = @At("HEAD"), cancellable = true)
+    private void mi_overclock_addon$keepRecipeWhileHoldingWarmUp(CallbackInfo ci) {
+        if (mi_overclock_addon$tickStartEfficiency > 0 && OverclockModuleType.from(behavior).allowsRecipeSwitching()) {
+            ci.cancel();
         }
     }
 
     @Inject(method = "updateActiveRecipe", at = @At("HEAD"))
     private void mi_overclock_addon$captureBeforeUpdate(CallbackInfoReturnable<Boolean> cir) {
         mi_overclock_addon$previousRecipe = activeRecipe;
+        mi_overclock_addon$efficiencyBeforeRecipeUpdate = efficiencyTicks;
     }
 
     @Inject(method = "updateActiveRecipe", at = @At("RETURN"))
     private void mi_overclock_addon$retainEfficiencyOnSwitch(CallbackInfoReturnable<Boolean> cir) {
         if (!cir.getReturnValueZ()
                 || mi_overclock_addon$previousRecipe == null
-                || activeRecipe == mi_overclock_addon$previousRecipe
-                || mi_overclock_addon$bankedEfficiency <= 0) {
+                || activeRecipe == mi_overclock_addon$previousRecipe) {
             return;
         }
 
@@ -89,7 +112,12 @@ public abstract class CrafterComponentMixin {
             return;
         }
 
-        efficiencyTicks = moduleType.switchEfficiency(mi_overclock_addon$bankedEfficiency, maxEfficiencyTicks);
+        int warmUpSource = Math.max(mi_overclock_addon$bankedEfficiency, mi_overclock_addon$efficiencyBeforeRecipeUpdate);
+        if (warmUpSource <= 0) {
+            return;
+        }
+
+        efficiencyTicks = moduleType.switchEfficiency(warmUpSource, maxEfficiencyTicks);
         mi_overclock_addon$justSwitchedRecipe = true;
     }
 
@@ -98,27 +126,33 @@ public abstract class CrafterComponentMixin {
         mi_overclock_addon$tickStartEfficiency = efficiencyTicks;
         mi_overclock_addon$justSwitchedRecipe = false;
 
+        OverclockModuleType moduleType = OverclockModuleType.from(behavior);
+
+        // Without a module the banked warm-up is forgotten, so removing and re-inserting a module
+        // starts a fresh bank instead of resurrecting an old peak. tickRecipe runs every tick
+        // (even while idle), so this triggers promptly when the module is pulled.
+        if (moduleType == OverclockModuleType.NONE) {
+            mi_overclock_addon$bankedEfficiency = 0;
+            return;
+        }
+
         // Quantum keeps the machine pinned at maximum overclock as long as it has a recipe.
-        if (activeRecipe != null && OverclockModuleType.from(behavior).isQuantum()) {
+        if (activeRecipe != null && moduleType.isQuantum()) {
             efficiencyTicks = maxEfficiencyTicks;
         }
     }
 
     @Inject(method = "tickRecipe", at = @At("RETURN"))
     private void mi_overclock_addon$holdOverclock(CallbackInfoReturnable<Boolean> cir) {
-        if (activeRecipe == null) {
-            return;
-        }
-
         OverclockModuleType moduleType = OverclockModuleType.from(behavior);
-        if (moduleType == OverclockModuleType.NONE || maxEfficiencyTicks <= 0) {
+        if (moduleType == OverclockModuleType.NONE) {
             return;
         }
 
         boolean active = cir.getReturnValueZ();
 
         // Quantum stays pinned at maximum overclock as long as the machine is powered.
-        if (moduleType.isQuantum()) {
+        if (moduleType.isQuantum() && activeRecipe != null && maxEfficiencyTicks > 0) {
             if (!active) {
                 long euToMaintain = Math.max(1, getCurrentRecipeEu());
                 if (behavior.consumeEu(euToMaintain, Simulation.ACT) <= 0) {
@@ -130,12 +164,14 @@ public abstract class CrafterComponentMixin {
             return;
         }
 
-        // Memory / Persistent freeze the overclock while idle so it does not bleed away
-        // between recipes; they never grant overclock from a cold start. Skip the freeze on the
-        // tick a switch happened, since the switch already set the restored value.
+        // Memory / Persistent freeze decay while idle. MI drops 1 tick of efficiency when starved for
+        // EU and clears the active recipe once efficiency hits 0, so we must freeze even if the recipe
+        // was cleared this tick (e.g. holding at exactly 1 tick of warm-up).
         if (!mi_overclock_addon$justSwitchedRecipe
+                && mi_overclock_addon$tickStartEfficiency > 0
                 && efficiencyTicks < mi_overclock_addon$tickStartEfficiency) {
-            efficiencyTicks = Math.min(mi_overclock_addon$tickStartEfficiency, maxEfficiencyTicks);
+            int cap = maxEfficiencyTicks > 0 ? maxEfficiencyTicks : mi_overclock_addon$tickStartEfficiency;
+            efficiencyTicks = Math.min(mi_overclock_addon$tickStartEfficiency, cap);
         }
 
         mi_overclock_addon$bankEfficiency();

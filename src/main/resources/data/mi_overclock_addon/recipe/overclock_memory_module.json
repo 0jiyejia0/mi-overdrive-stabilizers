@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "PRP",
+    "RCR",
+    "PRP"
+  ],
+  "key": {
+    "P": { "item": "modern_industrialization:steel_plate" },
+    "R": { "item": "minecraft:redstone" },
+    "C": { "item": "modern_industrialization:electronic_circuit" }
+  },
+  "result": {
+    "id": "mi_overclock_addon:overclock_memory_module",
+    "count": 1
+  }
+}

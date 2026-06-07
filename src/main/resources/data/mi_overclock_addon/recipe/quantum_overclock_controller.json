@@ -1,0 +1,29 @@
+{
+  "type": "modern_industrialization:assembler",
+  "eu": 8,
+  "duration": 600,
+  "item_inputs": [
+    {
+      "item": "mi_overclock_addon:persistent_overclock_module",
+      "amount": 1
+    },
+    {
+      "item": "modern_industrialization:quantum_circuit",
+      "amount": 2
+    },
+    {
+      "item": "modern_industrialization:steel_plate",
+      "amount": 4
+    },
+    {
+      "item": "minecraft:redstone_block",
+      "amount": 2
+    }
+  ],
+  "item_outputs": [
+    {
+      "item": "mi_overclock_addon:quantum_overclock_controller",
+      "amount": 1
+    }
+  ]
+}
