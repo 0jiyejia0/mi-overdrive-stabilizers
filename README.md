@@ -45,13 +45,3 @@ The first Gradle sync may download Minecraft, NeoForge, mappings, and mod depend
 ```
 
 The built jar will be written under `build/libs/`.
-
-## Repository
-
-Recommended GitHub repository name:
-
-```text
-mi-overdrive-stabilizers
-```
-
-The internal mod id is still `mi_overclock_addon` to avoid changing registry IDs.
